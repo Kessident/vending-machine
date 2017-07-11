@@ -27,7 +27,7 @@ const bulkCreateData = [
 ];
 
 
-describe ("Customer Endpoints", () => {
+describe ("Endpoints for: ", () => {
 
   before("create Table", (done) => {
     models.items.sync().then( () => {
@@ -41,66 +41,67 @@ describe ("Customer Endpoints", () => {
     });
   });
 
-  it("Should be able to get a list of items", (done) => {
-    request(app).get("/api/customer/items")
+  describe ("Customers", () => {
+    it("Should be able to get a list of items", (done) => {
+      request(app).get("/api/customer/items")
+        .expect(200)
+        .expect("Content-Type", "application/json; charset=utf-8")
+        .expect( (res) => {
+          assert.equal(res.body.status, "success");
+          assert.equal(res.body.data[0].description, "Item 1");
+          assert.equal(res.body.data[0].cost, 10);
+          assert.equal(res.body.data[0].quantity, 1);
+        })
+        .end(done);
+    });
+
+    it("Should be able to buy an item", (done) => {
+      let itemId = 1;
+      let moneyGiven = 50;
+      request(app).post("/api/customer/items/" + itemId + "/purchases")
+      .send({
+        itemWanted:"Item1",
+        moneyGiven:moneyGiven
+      })
       .expect(200)
-      .expect("Content-Type", "application/json; charset=utf-8")
       .expect( (res) => {
         assert.equal(res.body.status, "success");
-        assert.equal(res.body.data[0].description, "Item 1");
-        assert.equal(res.body.data[0].cost, 10);
-        assert.equal(res.body.data[0].quantity, 1);
       })
       .end(done);
-  });
+    });
 
-  it("Should be able to buy an item", (done) => {
-    let itemId = 1;
-    let moneyGiven = 50;
-    request(app).post("/api/customer/items/" + itemId + "/purchases")
-    .send({
-      itemWanted:"Item1",
-      moneyGiven:moneyGiven
-    })
-    .expect(200)
-    .expect( (res) => {
-      assert.equal(res.body.status, "success");
-    })
-    .end(done);
-  });
+    it("Should be able to buy an item with money left over", (done) => {
+      let itemId = 1;
+      let moneyGiven = 50;
+      request(app).post("/api/customer/items/" + itemId + "/purchases")
+      .send({
+        itemWanted:"Item1",
+        moneyGiven:moneyGiven
+      })
+      .expect(200)
+      .expect( (res) => {
+        assert.equal(res.body.status, "success");
+        assert.equal(res.body.data.moneyReturned, moneyGiven - bulkCreateData[0].cost);
+      })
+      .end(done);
+    });
 
-  it("Should be able to buy an item with money left over", (done) => {
-    let itemId = 1;
-    let moneyGiven = 50;
-    request(app).post("/api/customer/items/" + itemId + "/purchases")
-    .send({
-      itemWanted:"Item1",
-      moneyGiven:moneyGiven
-    })
-    .expect(200)
-    .expect( (res) => {
-      assert.equal(res.body.status, "success");
-      assert.equal(res.body.data.moneyReturned, moneyGiven - bulkCreateData[0].cost);
-    })
-    .end(done);
-  });
+    it("Should not be able to buy an item with no money", (done) => {
+      let itemId = 1;
+      let moneyGiven = 1;
+      request(app).post("/api/customer/items/" + itemId + "/purchases")
+      .send({
+        itemWanted:"Item1",
+        moneyGiven:1
+      })
+      .expect(402)
+      .expect( (res) => {
+        assert.equal(res.body.status, "fail");
+      })
+      .end(done);
+    });
 
-  it("Should not be able to buy an item with no money", (done) => {
-    let itemId = 1;
-    let moneyGiven = 1;
-    request(app).post("/api/customer/items/" + itemId + "/purchases")
-    .send({
-      itemWanted:"Item1",
-      moneyGiven:1
-    })
-    .expect(402)
-    .expect( (res) => {
-      assert.equal(res.body.status, "fail");
-    })
-    .end(done);
-  });
-
-  it("Should not be able to buy an item that does not exist", (done) => {
+    it("Should not be able to buy an item that does not exist", (done) => {
     let itemId = 404;
     let moneyGiven = 5000;
     request(app).post("/api/customer/items/" + itemId + "/purchases")
@@ -115,5 +116,12 @@ describe ("Customer Endpoints", () => {
     })
     .end(done);
   });
+});
 
+  describe("Vendors", () => {
+    //A vendor should be able to see total amount of money in machine
+    //A vendor should be able to see a list of all purchases with their time of purchase
+    //A vendor should be able to update the description, quantity, and costs of items in the machine
+    //A vendor should be able to add a new item to the machine
+  });
 });

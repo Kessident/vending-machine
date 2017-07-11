@@ -27,7 +27,6 @@ router.post("/items/:itemId/purchases", function(req, res){
       id:req.params.itemId
     }
   }).then( (item) => {
-    console.log(item);
     let serverResponse;
     /* Item Found */
     if (item){
