@@ -1,0 +1,19 @@
+{
+  "name": "vendin-machine-v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "morgan": "^1.8.2",
+    "pg": "^6.4.0",
+    "sequelize": "^4.3.1",
+    "supertest": "^3.0.0"
+  }
+}
