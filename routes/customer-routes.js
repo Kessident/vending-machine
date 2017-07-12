@@ -64,7 +64,9 @@ router.post("/items/:itemId/purchases", function(req, res){
     if (serverResponse.status === "success"){
       models.items.update({quantity: item.quantity-1}, {where: {description:item.description}})
       .then(() => {
-        res.json(serverResponse);
+        models.transactions.create({itemBought:item.description, amount:item.cost}).then( () => {
+          res.json(serverResponse);
+        });
       });
     } else {
       res.json(serverResponse);

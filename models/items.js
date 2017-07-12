@@ -4,12 +4,6 @@ module.exports = function(sequelize, DataTypes) {
     description: DataTypes.STRING,
     cost: DataTypes.INTEGER,
     quantity: DataTypes.INTEGER
-  }, {
-    classMethods: {
-      associate: function(models) {
-        // associations can be defined here
-      }
-    }
-  });
+  }, {});
   return items;
 };
